@@ -1,0 +1,6 @@
+#!/bin/bash
+while read txt
+do
+	txtlist=("${txtlist[@]}" $txt)
+done
+sort $txtlist | uniq -u -i
