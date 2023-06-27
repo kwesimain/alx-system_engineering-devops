@@ -1,3 +1,11 @@
-#!/usr/bin/env bash
-#creates an RSA keypair
-ssh-keygen -b 4096 -f school -N betty
+#!/bin/bash
+
+key_name="school"
+key_bits=4096
+passphrase="betty"
+
+# Generate RSA key pair
+openssl genpkey -algorithm RSA -out "${key_name}_private.pem" -aes256 -pass "pass:${passphrase}" -pkeyopt rsa_keygen_bits:${key_bits}
+openssl rsa -in "${key_name}_private.pem" -pubout -out "${key_name}_public.pem"
+
+
