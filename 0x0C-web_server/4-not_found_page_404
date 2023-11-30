@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Installs Nginx with the following configurations:
+#+    Listens on port 80.
+#+    Returns a page containing "Hello World!" when queried
+#++    at the root with a curl GET request.
+#  Configure /redirect_me as a 301 Moved permanently"
+# Include a custom 404 page containign "Ceci n'est pas une page"
+
+# install nginx
+apt-get update
+apt-get install -y nginx
+
+# Create a file with "Hello World!" content in the default root directory
+echo "Hello World!" > /var/www/html/index.html
+
+# 404 page containing "ceci n'est pas une page"
+echo "Ceci n'est pas une page" > /var/www/html/xyz.html
+
+# Configure nginx to litsen to port 80
+printf %s "server {
+     listen      80 default_server;
+     listen      [::]:80 default_server;
+     root        /var/www/html;
+     index       index.html;
+
+     location /redirect_me {
+        return 301 https://enwikipedia.org/wiki/Nginx;
+     }
+
+     error_page 404 /xyz.html;
+     location /xyz {
+        root /var/www/html;
+        internal;
+     }
+}
+" > /etc/nginx/sites-available/default
+
+# Restart nginx
+service nginx restart
