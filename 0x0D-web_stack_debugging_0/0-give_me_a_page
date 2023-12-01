@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# 1. Apache service status - running
+# 2. created a simple html file containing the test "Hello Holberton"
+service apache2 start
+echo "Hello Holberton" > /var/www/html/index.html
