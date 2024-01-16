@@ -16,17 +16,23 @@ def recurse(subreddit, hot_list=[], after="", count=0):
         "count": count,
         "limit": 100
     }
-    response = requests.get(url, headers=headers, params=params,
-                            allow_redirects=False)
+    response = requests.get(url, headers=headers, params=params, allow_redirects=False)
     if response.status_code == 404:
         return None
-
-    results = response.json().get("data")
-    after = results.get("after")
-    count += results.get("dist")
-    for c in results.get("children"):
-        hot_list.append(c.get("data").get("title"))
+    data = response.json()
+    results = data['data']['children']
+    hot_list.extend([article['data']['title'] for article in articles])
+    after = data['data']['after']
 
     if after is not None:
         return recurse(subreddit, hot_list, after, count)
     return hot_list
+
+    elif response.status_code == 302:
+        print(f"The subreddit '{subreddit}' does not exist or is invalid.")
+        return None
+
+    else:
+        # Print an error message if the request was not successful
+        print(f"Error: {response.status_code}")
+        return None
